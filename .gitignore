@@ -1,0 +1,40 @@
+# ── Environment / Secrets ──────────────────────────
+.env
+.env.local
+.env.production
+backend/.env
+
+# ── Go Backend ─────────────────────────────────────
+backend/server
+backend/clinic-server
+backend/*.exe
+backend/tmp/
+
+# ── Node / Frontend ────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# ── Docker ─────────────────────────────────────────
+docker-compose.override.yml
+
+# ── Database ───────────────────────────────────────
+*.sql.bak
+pgdata/
+
+# ── OS Files ───────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE / Editor ───────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Logs ───────────────────────────────────────────
+*.log
+logs/
+```
