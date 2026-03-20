@@ -156,62 +156,15 @@ Supporting catalogs: `drug_catalog`, `test_catalog`
 
 ## Features
 
-- ✅ Unified input screen (type or voice dictation)
-- ✅ AI classification (drugs / lab tests / clinical notes)
-- ✅ Editable AI results before saving
-- ✅ Structured PostgreSQL storage
-- ✅ Auto bill generation with line items
-- ✅ Print: Prescription / Lab sheet / Bill
-- ✅ Mark bill as paid
-- ✅ Patient registry
-- ✅ Visit history dashboard
-- ✅ Sample notes for demo
+- Unified input screen (type or voice dictation)
+- AI classification (drugs / lab tests / clinical notes)
+- Editable AI results before saving
+- Structured PostgreSQL storage
+- Auto bill generation with line items
+- Print: Prescription / Lab sheet / Bill
+- Mark bill as paid
+- Patient registry
+- Visit history dashboard
+- Sample notes for demo
 
 ---
-
-## Project Structure
-
-```
-clinic-system/
-├── backend/
-│   ├── cmd/server/main.go        # Entry point
-│   ├── internal/
-│   │   ├── api/                  # HTTP handlers + router
-│   │   ├── db/                   # DB connection + migrations
-│   │   ├── models/               # Shared data models
-│   │   └── services/             # Business logic + AI service
-│   ├── migrations/001_init.sql   # Raw SQL schema
-│   ├── Dockerfile
-│   └── .env.example
-├── frontend/
-│   ├── src/
-│   │   ├── pages/                # Dashboard, NewVisit, VisitDetail, Patients
-│   │   ├── components/           # Layout
-│   │   └── utils/api.js          # Axios API client
-│   ├── Dockerfile
-│   └── vite.config.js
-├── docker-compose.yml
-└── README.md
-```
-
----
-
-## Assumptions
-
-1. Single-clinic deployment — no multi-tenancy
-2. One doctor seeded by default (Dr. Sarah Chen)
-3. Drug & test pricing from pre-seeded catalog; unmatched items default to $5/$20
-4. Tax rate fixed at 5% (configurable in code)
-5. Consultation fee fixed at $30 (configurable in code)
-6. Voice input via Web Speech API — Chrome/Edge only
-7. Currency is USD
-
----
-
-## Advanced Features
-
-- **Confidence score**: AI returns a 0–1 confidence value displayed to the user
-- **Editable AI output**: Doctors can add/remove/edit before finalizing
-- **Selective printing**: Separate print buttons for Rx, Lab sheet, and Bill
-- **Catalog lookup**: Prices auto-populated from drug/test catalogs
-- **Soft delete safety**: Cascade deletes maintain referential integrity
