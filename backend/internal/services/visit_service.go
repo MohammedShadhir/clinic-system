@@ -295,12 +295,18 @@ func (s *VisitService) GetVisit(visitID string) (*models.Visit, error) {
 // ListVisits returns all visits with patient info
 func (s *VisitService) ListVisits() ([]models.Visit, error) {
 	rows, err := db.DB.Query(`
-		SELECT v.id, v.patient_id, v.doctor_id, v.raw_input, v.visit_date, v.status, v.created_at, v.updated_at,
-		       p.id, p.name, p.gender, p.phone
-		FROM visits v
-		JOIN patients p ON p.id = v.patient_id
-		ORDER BY v.created_at DESC
-		LIMIT 100`)
+        SELECT v.id, v.patient_id, v.doctor_id, v.raw_input, v.visit_date, v.status, v.created_at, v.updated_at,
+               p.id, p.name, p.gender, p.phone,
+               COALESCE(rx.cnt, 0) as rx_count,
+               COALESCE(lt.cnt, 0) as lt_count,
+               COALESCE(b.total_amount, 0) as bill_total
+        FROM visits v
+        JOIN patients p ON p.id = v.patient_id
+        LEFT JOIN (SELECT visit_id, COUNT(*) as cnt FROM prescriptions GROUP BY visit_id) rx ON rx.visit_id = v.id
+        LEFT JOIN (SELECT visit_id, COUNT(*) as cnt FROM lab_tests GROUP BY visit_id) lt ON lt.visit_id = v.id
+        LEFT JOIN bills b ON b.visit_id = v.id
+        ORDER BY v.created_at DESC
+        LIMIT 100`)
 	if err != nil {
 		return nil, err
 	}
@@ -310,8 +316,22 @@ func (s *VisitService) ListVisits() ([]models.Visit, error) {
 	for rows.Next() {
 		var v models.Visit
 		var p models.Patient
+		var rxCount, ltCount int
+		var billTotal float64
 		rows.Scan(&v.ID, &v.PatientID, &v.DoctorID, &v.RawInput, &v.VisitDate, &v.Status, &v.CreatedAt, &v.UpdatedAt,
-			&p.ID, &p.Name, &p.Gender, &p.Phone)
+			&p.ID, &p.Name, &p.Gender, &p.Phone,
+			&rxCount, &ltCount, &billTotal)
+
+		// Populate counts so frontend can show them
+		for i := 0; i < rxCount; i++ {
+			v.Prescriptions = append(v.Prescriptions, models.Prescription{})
+		}
+		for i := 0; i < ltCount; i++ {
+			v.LabTests = append(v.LabTests, models.LabTest{})
+		}
+		if billTotal > 0 {
+			v.Bill = &models.Bill{TotalAmount: billTotal}
+		}
 		v.Patient = &p
 		visits = append(visits, v)
 	}
