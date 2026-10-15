@@ -9,9 +9,17 @@ func SetupRouter(h *Handler) *gin.Engine {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173", "https://clinic-system-weld.vercel.app"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowOrigins: []string{
+			"http://localhost:3000",
+			"http://localhost:5173",
+			"https://clinic-system-weld.vercel.app",
+		},
+		AllowMethods: []string{
+			"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS",
+		},
+		AllowHeaders: []string{
+			"Origin", "Content-Type", "Authorization",
+		},
 		AllowCredentials: true,
 	}))
 
@@ -26,7 +34,7 @@ func SetupRouter(h *Handler) *gin.Engine {
 		// Doctors
 		api.GET("/doctors", h.GetDoctors)
 
-		// AI Classification (standalone)
+		// AI Classification
 		api.POST("/classify", h.ClassifyNotes)
 
 		// Visits
